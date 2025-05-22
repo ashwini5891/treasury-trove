@@ -12,7 +12,7 @@ using TransactionService.Data;
 namespace TransactionService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250522115254_InitialCreate")]
+    [Migration("20250522144321_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,27 +24,6 @@ namespace TransactionService.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("TransactionService.Models.Account", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Accounts");
-                });
 
             modelBuilder.Entity("TransactionService.Models.Category", b =>
                 {
@@ -96,9 +75,6 @@ namespace TransactionService.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uuid");
-
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
@@ -120,15 +96,56 @@ namespace TransactionService.Migrations
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.Property<Guid>("UserProfileId")
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("AccountId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("EventId");
 
+                    b.HasIndex("UserProfileId");
+
                     b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("TransactionService.Models.UserProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("ExternalId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("LastLoginAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("ExternalId")
+                        .IsUnique();
+
+                    b.ToTable("UserProfiles");
                 });
 
             modelBuilder.Entity("TransactionService.Models.Category", b =>
@@ -143,12 +160,6 @@ namespace TransactionService.Migrations
 
             modelBuilder.Entity("TransactionService.Models.Transaction", b =>
                 {
-                    b.HasOne("TransactionService.Models.Account", "Account")
-                        .WithMany("Transactions")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("TransactionService.Models.Category", "Category")
                         .WithMany("Transactions")
                         .HasForeignKey("CategoryId")
@@ -159,16 +170,17 @@ namespace TransactionService.Migrations
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("Account");
+                    b.HasOne("TransactionService.Models.UserProfile", "UserProfile")
+                        .WithMany()
+                        .HasForeignKey("UserProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
 
                     b.Navigation("Event");
-                });
 
-            modelBuilder.Entity("TransactionService.Models.Account", b =>
-                {
-                    b.Navigation("Transactions");
+                    b.Navigation("UserProfile");
                 });
 
             modelBuilder.Entity("TransactionService.Models.Category", b =>

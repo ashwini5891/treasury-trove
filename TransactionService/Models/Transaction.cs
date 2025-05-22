@@ -16,7 +16,7 @@ namespace TransactionService.Models
         public Guid? EventId { get; set; }
         public Event? Event { get; set; }
 
-        public Guid UserProfileId { get; set; }
+        public Guid? UserProfileId { get; set; }
         public UserProfile UserProfile { get; set; }
     }
 }

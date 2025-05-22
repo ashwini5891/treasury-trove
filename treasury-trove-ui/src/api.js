@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://localhost:5001/api'; // or your .NET port
+const API_BASE_URL = 'http://localhost:5210/api'; // or your .NET port
 
 export const getTransactions = () =>
   axios.get(`${API_BASE_URL}/transactions`);
