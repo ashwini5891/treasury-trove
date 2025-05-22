@@ -8,9 +8,9 @@ namespace TransactionService.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<Transaction> Transactions => Set<Transaction>();
-        public DbSet<Account> Accounts => Set<Account>();
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<Event> Events => Set<Event>();
+        public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,10 +32,6 @@ namespace TransactionService.Data
                 entity.Property(t => t.Timestamp)
                       .IsRequired();
 
-                entity.HasOne(t => t.Account)
-                      .WithMany(a => a.Transactions)
-                      .HasForeignKey(t => t.AccountId);
-
                 entity.HasOne(t => t.Category)
                       .WithMany(c => c.Transactions)
                       .HasForeignKey(t => t.CategoryId)
@@ -47,20 +43,7 @@ namespace TransactionService.Data
                       .OnDelete(DeleteBehavior.SetNull);
             });
 
-            // Account
-            modelBuilder.Entity<Account>(entity =>
-            {
-                entity.HasKey(a => a.Id);
-
-                entity.Property(a => a.Name)
-                      .HasMaxLength(100)
-                      .IsRequired();
-
-                entity.Property(a => a.Type)
-                      .HasMaxLength(50)
-                      .IsRequired();
-            });
-
+            
             // Category
             modelBuilder.Entity<Category>(entity =>
             {
@@ -91,6 +74,27 @@ namespace TransactionService.Data
                 entity.Property(e => e.EventDate)
                       .IsRequired();
             });
+
+            modelBuilder.Entity<UserProfile>(entity =>
+{
+    entity.HasKey(u => u.Id);
+
+    entity.Property(u => u.ExternalId)
+          .HasMaxLength(100)
+          .IsRequired();
+
+    entity.Property(u => u.Email)
+          .HasMaxLength(256)
+          .IsRequired();
+
+    entity.Property(u => u.DisplayName)
+          .HasMaxLength(100)
+          .IsRequired();
+
+    entity.HasIndex(u => u.ExternalId).IsUnique();
+    entity.HasIndex(u => u.Email).IsUnique();
+});
+
         }
     }
 }

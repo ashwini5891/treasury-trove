@@ -27,9 +27,9 @@ namespace TransactionService.Controllers
                 Currency = dto.Currency,
                 Description = dto.Description,
                 Timestamp = dto.Timestamp,
-                AccountId = dto.AccountId,
                 CategoryId = dto.CategoryId,
-                EventId = dto.EventId
+                EventId = dto.EventId,
+                UserProfileId = dto.UserProfileId
             };
 
             _context.Transactions.Add(transaction);

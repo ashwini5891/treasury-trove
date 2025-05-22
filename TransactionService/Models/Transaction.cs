@@ -10,13 +10,13 @@ namespace TransactionService.Models
         public string Description { get; set; }
         public DateTime Timestamp { get; set; }
 
-        public Guid AccountId { get; set; }
-        public Account Account { get; set; }
-
         public Guid? CategoryId { get; set; }
         public Category? Category { get; set; }
 
         public Guid? EventId { get; set; }
         public Event? Event { get; set; }
+
+        public Guid UserProfileId { get; set; }
+        public UserProfile UserProfile { get; set; }
     }
 }
