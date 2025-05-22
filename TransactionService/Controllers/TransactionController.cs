@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using TransactionService.Data;
 using TransactionService.Models;
 using TransactionService.Models.Dtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace TransactionService.Controllers
 {
