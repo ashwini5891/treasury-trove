@@ -1,22 +1,25 @@
 using Microsoft.EntityFrameworkCore;
 using ExportService.Data;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Register DbContext with SQL Server
+// Register DbContext with PostgreSQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString, sqlOptions =>
+builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
+{
+    options.UseNpgsql(connectionString, npgsqlOptions =>
     {
-        sqlOptions.EnableRetryOnFailure(
+        npgsqlOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
             maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null);
-    }));
+            errorCodesToAdd: null);
+    });
+});
 
 // Add controllers and API explorer for Swagger
 builder.Services.AddControllers();
