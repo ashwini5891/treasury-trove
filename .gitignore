@@ -400,3 +400,4 @@ FodyWeavers.xsd
 *.sln.iml
 AuthenticationService/appsettings.Development.json
 TransactionService/appsettings.Development.json
+ExportService/appsettings.Development.json
