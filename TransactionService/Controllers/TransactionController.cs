@@ -46,10 +46,86 @@ namespace TransactionService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllTransactions()
+        public async Task<IActionResult> GetAllTransactions(bool includeDeleted = false)
         {
-            var transactions = await _context.Transactions.ToListAsync();
+            var query = _context.Transactions.AsQueryable();
+            
+            if (!includeDeleted)
+            {
+                query = query.Where(t => !t.IsDeleted);
+            }
+            
+            var transactions = await query.ToListAsync();
             return Ok(transactions);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTransaction(Guid id, [FromQuery] bool permanent = false, [FromQuery] Guid? deletedBy = null)
+        {
+            var transaction = await _context.Transactions.FindAsync(id);
+            if (transaction == null || (transaction.IsDeleted && !permanent))
+            {
+                return NotFound();
+            }
+
+            if (permanent)
+            {
+                // Perform hard delete
+                _context.Transactions.Remove(transaction);
+            }
+            else
+            {
+                // Perform soft delete
+                transaction.IsDeleted = true;
+                transaction.DeletedAt = DateTime.UtcNow;
+                transaction.DeletedBy = deletedBy;
+                _context.Transactions.Update(transaction);
+            }
+
+            await _context.SaveChangesAsync();
+            
+            return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTransaction(Guid id, [FromBody] UpdateTransactionDto dto)
+        {
+            var transaction = await _context.Transactions.FindAsync(id);
+            if (transaction == null || transaction.IsDeleted)
+            {
+                return NotFound();
+            }
+
+            // Update only the fields that are allowed to be updated
+            transaction.Amount = dto.Amount;
+            transaction.Currency = dto.Currency;
+            transaction.Description = dto.Description;
+            transaction.CategoryId = dto.CategoryId;
+            transaction.EventId = dto.EventId;
+            transaction.Timestamp = dto.Timestamp;
+            
+            // Update audit fields
+            transaction.UpdatedAt = DateTime.UtcNow;
+            transaction.UpdatedBy = dto.UpdatedBy;
+            
+            // Handle soft delete if requested
+            if (dto.IsDeleted.HasValue && dto.IsDeleted.Value)
+            {
+                transaction.IsDeleted = true;
+                transaction.DeletedAt = DateTime.UtcNow;
+                transaction.DeletedBy = dto.DeletedBy ?? dto.UpdatedBy;
+            }
+            else if (dto.IsDeleted.HasValue && !dto.IsDeleted.Value && transaction.IsDeleted)
+            {
+                // Handle un-delete
+                transaction.IsDeleted = false;
+                transaction.DeletedAt = null;
+                transaction.DeletedBy = null;
+            }
+
+            await _context.SaveChangesAsync();
+            
+            return Ok(transaction);
         }
     }
 }

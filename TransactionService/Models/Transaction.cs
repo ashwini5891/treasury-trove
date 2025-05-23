@@ -8,7 +8,14 @@ namespace TransactionService.Models
         public decimal Amount { get; set; }
         public string Currency { get; set; } = "USD";
         public string Description { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        
+        public DateTime? UpdatedAt { get; set; }
+        public Guid? UpdatedBy { get; set; }  
+
+        public bool IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
+        public Guid? DeletedBy { get; set; } 
 
         public Guid? CategoryId { get; set; }
         public Category? Category { get; set; }

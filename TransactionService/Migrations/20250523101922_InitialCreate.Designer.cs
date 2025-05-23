@@ -12,7 +12,7 @@ using TransactionService.Data;
 namespace TransactionService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250522144321_InitialCreate")]
+    [Migration("20250523101922_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -86,6 +86,12 @@ namespace TransactionService.Migrations
                         .HasMaxLength(3)
                         .HasColumnType("character varying(3)");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -93,10 +99,19 @@ namespace TransactionService.Migrations
                     b.Property<Guid?>("EventId")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UserProfileId")
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("UserProfileId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -172,9 +187,7 @@ namespace TransactionService.Migrations
 
                     b.HasOne("TransactionService.Models.UserProfile", "UserProfile")
                         .WithMany()
-                        .HasForeignKey("UserProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserProfileId");
 
                     b.Navigation("Category");
 

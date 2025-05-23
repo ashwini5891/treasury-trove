@@ -116,6 +116,102 @@ body {
   transform: translateY(0);
 }
 
+.header-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.btn-secondary:disabled {
+  background-color: #c6c7c8;
+  cursor: not-allowed;
+}
+
+.transaction-actions {
+  display: flex;
+  gap: 5px;
+  min-width: 80px;
+  justify-content: flex-end;
+}
+
+.btn-edit,
+.btn-delete,
+.btn-restore,
+.btn-delete-permanent {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  font-size: 1em;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.btn-edit {
+  color: #4a89dc;
+  background-color: rgba(74, 137, 220, 0.1);
+}
+
+.btn-delete {
+  color: #ff4444;
+  background-color: rgba(255, 68, 68, 0.1);
+}
+
+.btn-restore {
+  color: #28a745;
+  background-color: rgba(40, 167, 69, 0.1);
+}
+
+.btn-delete-permanent {
+  color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.btn-edit:hover,
+.btn-delete:hover,
+.btn-restore:hover,
+.btn-delete-permanent:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.btn-edit:active,
+.btn-delete:active,
+.btn-restore:active,
+.btn-delete-permanent:active {
+  transform: scale(0.95);
+}
+
+.transaction-item.deleted {
+  opacity: 0.7;
+  background-color: #f8f9fa;
+}
+
+.transaction-item.deleted .transaction-amount {
+  text-decoration: line-through;
+  color: #6c757d;
+}
+
 .transactions-list {
   list-style: none;
   padding: 0;
@@ -124,17 +220,23 @@ body {
 
 .transaction-item {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 1rem 0;
+  padding: 12px 15px;
   border-bottom: 1px solid #eee;
-  transition: background-color 0.2s ease;
-}
-
-.transaction-item:last-child {
-  border-bottom: none;
+  transition: all 0.2s ease;
+  background-color: white;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .transaction-item:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
+}
+
+.transaction-item:not(.deleted):hover {
   background-color: #f8f9fa;
 }
 
@@ -241,6 +343,17 @@ form {
 
 .form-group {
   margin-bottom: 1.5rem;
+  flex: 1;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-row .form-group {
+  margin-bottom: 0;
 }
 
 .form-group label {
@@ -286,15 +399,52 @@ form {
 .input-with-currency {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .input-with-currency input {
   flex: 1;
+  min-width: 120px;
+  text-align: right;
+  padding-right: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.amount-group {
+  max-width: 200px;
 }
 
 .currency-select {
   width: auto;
   min-width: 80px;
+  padding: 0.5rem 0.25rem 0.5rem 0.5rem;
+  font-size: 0.9rem;
+  height: 100%;
+}
+
+/* Make dropdowns consistent */
+select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: white;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem top 50%;
+  background-size: 0.65rem auto;
+  padding-right: 2.5rem;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.2);
 }
 
 .form-actions {
