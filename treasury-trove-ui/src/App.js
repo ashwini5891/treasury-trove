@@ -137,7 +137,8 @@ function App() {
         />
       )}
       <header className="app-header">
-        <h1>Transactions {showDeleted ? '(Deleted)' : ''}</h1>
+        <h1>Welcome to Treasury Trove</h1>
+        <h2>Transactions {showDeleted ? '(Deleted)' : ''}</h2>
         <div className="header-actions">
           <button 
             onClick={() => setShowForm(true)}
