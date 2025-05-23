@@ -43,7 +43,7 @@ namespace ExportService.Migrations
 
                     b.HasIndex("OrganizationId");
 
-                    b.ToTable("ExportEvents", "export");
+                    b.ToTable("ExportEvents", "public");
                 });
 
             modelBuilder.Entity("ExportService.Models.ExportTransaction", b =>
@@ -100,7 +100,7 @@ namespace ExportService.Migrations
 
                     b.HasIndex("Timestamp");
 
-                    b.ToTable("ExportTransactions", "export");
+                    b.ToTable("ExportTransactions", "public");
                 });
 #pragma warning restore 612, 618
         }

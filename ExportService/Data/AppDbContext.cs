@@ -29,8 +29,8 @@ namespace ExportService.Data
                     
                 entity.HasIndex(e => e.OrganizationId);
                 
-                // Configure table name and schema if needed
-                entity.ToTable("ExportEvents", "export");
+                // Configure table name with public schema
+                entity.ToTable("ExportEvents", "public");
             });
 
             // Configure ExportTransaction entity
@@ -58,8 +58,8 @@ namespace ExportService.Data
                 entity.HasIndex(t => t.CategoryId);
                 entity.HasIndex(t => t.Timestamp);
                 
-                // Configure table name and schema if needed
-                entity.ToTable("ExportTransactions", "export");
+                // Configure table name with public schema
+                entity.ToTable("ExportTransactions", "public");
             });
         }
     }

@@ -5,7 +5,8 @@ import {
   updateTransaction, 
   deleteTransaction, 
   getTransactionById,
-  getDeletedTransactions 
+  getDeletedTransactions,
+  downloadExport 
 } from './api';
 import TransactionForm from './components/TransactionForm';
 import './App.css';
@@ -83,6 +84,28 @@ function App() {
     setEditingTransaction(null);
   };
 
+  const handleToggleView = () => {
+    const newShowDeleted = !showDeleted;
+    setShowDeleted(newShowDeleted);
+    fetchTransactions(newShowDeleted);
+  };
+
+  const handleDownloadExport = async () => {
+    try {
+      const blob = await downloadExport();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `TreasuryTrove_Export_${new Date().toISOString().split('T')[0]}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading export:', error);
+      setError('Failed to download export. Please try again.');
+    }
+  };
+
   const handleDeleteTransaction = async (id) => {
     if (!window.confirm('Are you sure you want to delete this transaction?')) {
       return;
@@ -137,9 +160,11 @@ function App() {
         />
       )}
       <header className="app-header">
-        <h1>Welcome to Treasury Trove</h1>
-        <h2>Transactions {showDeleted ? '(Deleted)' : ''}</h2>
+        <h1>TreasuryTrove</h1>
         <div className="header-actions">
+          <button onClick={handleDownloadExport} className="export-button">
+            Export to Excel
+          </button>
           <button 
             onClick={() => setShowForm(true)}
             className="btn-primary"
@@ -148,10 +173,7 @@ function App() {
             Add Transaction
           </button>
           <button 
-            onClick={() => {
-              setShowDeleted(!showDeleted);
-              fetchTransactions(!showDeleted);
-            }}
+            onClick={handleToggleView}
             className={`btn-secondary ${showDeleted ? 'active' : ''}`}
           >
             {showDeleted ? 'Show Active' : 'Show Deleted'}

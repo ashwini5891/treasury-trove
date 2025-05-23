@@ -118,6 +118,19 @@ export const getUsers = async () => {
   }
 };
 
+// Export API
+export const downloadExport = async () => {
+  try {
+    const response = await apiClient.get('/export/events/download', {
+      responseType: 'blob', // Important for handling binary data
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error downloading export:', error);
+    throw error;
+  }
+};
+
 // Add request interceptor for logging
 apiClient.interceptors.request.use(
   (config) => {
