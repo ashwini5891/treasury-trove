@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using TransactionService.Data;
 using TransactionService.Models;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace TransactionService.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]")]  // CORS is handled at the application level
     public class TransactionsController : ControllerBase
     {
         private readonly AppDbContext _context;

@@ -1,6 +1,46 @@
-# Getting Started with Create React App
+# Treasury Trove
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A financial management application with Supabase authentication.
+
+## Features
+
+- User authentication (Sign up, Sign in, Password reset)
+- Protected routes
+- Responsive design
+- Modern UI with Tailwind CSS
+
+## Prerequisites
+
+- Node.js (v14 or later)
+- npm or yarn
+- Supabase account
+
+## Setup Instructions
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/treasury-trove.git
+   cd treasury-trove/treasury-trove-ui
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   Create a `.env` file in the root directory with the following content:
+   ```
+   REACT_APP_SUPABASE_URL=your-supabase-url
+   REACT_APP_SUPABASE_ANON_KEY=your-supabase-anon-key
+   ```
+   Replace `your-supabase-url` and `your-supabase-anon-key` with your Supabase project credentials.
+
+4. **Start the development server**
+   ```bash
+   npm start
+   ```
+   This will start the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 ## Available Scripts
 
@@ -39,15 +79,40 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
+## Supabase Setup
+
+1. **Create a new project** in your [Supabase dashboard](https://app.supabase.com/)
+2. **Enable Email/Password authentication**:
+   - Go to Authentication > Providers
+   - Enable "Email" provider
+   - Configure email templates if needed
+3. **Configure Site URL**:
+   - Go to Authentication > URL Configuration
+   - Add your development and production URLs (e.g., `http://localhost:3000`)
+
+## Deployment
+
+### Building for Production
+
+```bash
+npm run build
+```
+
+This will create a production build in the `build` folder.
+
+### Deploying to Netlify
+
+1. Push your code to a GitHub repository
+2. Connect the repository to Netlify
+3. Add the environment variables in Netlify's site settings
+4. Deploy!
+
 ## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- [React Documentation](https://reactjs.org/)
+- [React Router](https://reactrouter.com/)
+- [Supabase Documentation](https://supabase.com/docs)
+- [Tailwind CSS](https://tailwindcss.com/)
 
 ### Analyzing the Bundle Size
 

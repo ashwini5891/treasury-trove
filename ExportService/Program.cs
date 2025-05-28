@@ -2,6 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using ExportService.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
+using ExportService.Services;
+using OfficeOpenXml;
+
+// Set the EPPlus license context for non-commercial use (EPPlus 7.x)
+ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +25,9 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
             errorCodesToAdd: null);
     });
 });
+
+// Register services
+builder.Services.AddScoped<IExportGeneratorService, ExportGeneratorService>();
 
 // Add controllers and API explorer for Swagger
 builder.Services.AddControllers();

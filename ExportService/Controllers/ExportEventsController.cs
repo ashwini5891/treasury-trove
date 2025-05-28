@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ExportService.Data;
 using ExportService.Models.Dtos;
+using ExportService.Services;
 
 namespace ExportService.Controllers
 {
@@ -11,9 +12,12 @@ namespace ExportService.Controllers
     {
         private readonly AppDbContext _context;
         private readonly ILogger<ExportEventsController> _logger;
-        private readonly ExportGeneratorService _exportGenerator;
+        private readonly IExportGeneratorService _exportGenerator; // Changed to interface
 
-        public ExportEventsController(AppDbContext context, ILogger<ExportEventsController> logger, ExportGeneratorService exportGenerator)
+        public ExportEventsController(
+            AppDbContext context, 
+            ILogger<ExportEventsController> logger,
+            IExportGeneratorService exportGenerator) // Changed to interface
         {
             _context = context;
             _logger = logger;
