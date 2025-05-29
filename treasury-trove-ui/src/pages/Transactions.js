@@ -7,22 +7,36 @@ import {
   updateTransaction, 
   deleteTransaction 
 } from '../services/api';
+import { supabase } from '../lib/supabase';
 
 function Transactions() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadTransactions();
+    const getUserId = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setUserId(session.user.id);
+      }
+    };
+    getUserId();
   }, []);
+
+  useEffect(() => {
+    if (userId) {
+      loadTransactions();
+    }
+  }, [userId]);
 
   const loadTransactions = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await fetchTransactions();
+      const data = await fetchTransactions(userId);
       setTransactions(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error fetching transactions:', err);

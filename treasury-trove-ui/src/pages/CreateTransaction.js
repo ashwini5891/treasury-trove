@@ -44,7 +44,7 @@ function CreateTransaction() {
         currency: formData.currency,
         description: formData.description,
         timestamp: new Date().toISOString(),
-        userProfileId: session.user.id, // Use the user ID from Supabase
+        userId: session.user.id, // Use the user ID from Supabase
         categoryId: formData.categoryId || null,
         eventId: formData.eventId || null
       };

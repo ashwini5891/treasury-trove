@@ -10,8 +10,9 @@ namespace TransactionService.Models.Dtos
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
         public Guid? CategoryId { get; set; }
         public Guid? EventId { get; set; }
-        public Guid? UpdatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
         public bool? IsDeleted { get; set; }
-        public Guid? DeletedBy { get; set; }
+        public string? DeletedBy { get; set; }
+        public string UserId { get; set; } = null!; // Added UserId field
     }
 }

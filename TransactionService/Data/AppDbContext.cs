@@ -10,7 +10,6 @@ namespace TransactionService.Data
         public DbSet<Transaction> Transactions => Set<Transaction>();
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<Event> Events => Set<Event>();
-        public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,6 +31,12 @@ namespace TransactionService.Data
                 entity.Property(t => t.Timestamp)
                       .IsRequired();
 
+                entity.Property(t => t.UserId)
+                      .IsRequired()
+                      .HasMaxLength(200);
+
+                entity.HasIndex(t => t.UserId);
+
                 entity.HasOne(t => t.Category)
                       .WithMany(c => c.Transactions)
                       .HasForeignKey(t => t.CategoryId)
@@ -43,15 +48,15 @@ namespace TransactionService.Data
                       .OnDelete(DeleteBehavior.SetNull);
             });
 
-            
             // Category
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.HasKey(c => c.Id);
 
                 entity.Property(c => c.Name)
-                      .HasMaxLength(100)
-                      .IsRequired();
+                      .IsRequired()
+                      .HasMaxLength(100);
+
 
                 entity.HasOne(c => c.ParentCategory)
                       .WithMany()
@@ -65,36 +70,13 @@ namespace TransactionService.Data
                 entity.HasKey(e => e.Id);
 
                 entity.Property(e => e.Title)
-                      .HasMaxLength(200)
-                      .IsRequired();
+                      .IsRequired()
+                      .HasMaxLength(200);
 
-                entity.Property(e => e.Description)
-                      .HasMaxLength(1000);
-
+                entity.Property(e => e.Description);
                 entity.Property(e => e.EventDate)
                       .IsRequired();
             });
-
-            modelBuilder.Entity<UserProfile>(entity =>
-{
-    entity.HasKey(u => u.Id);
-
-    entity.Property(u => u.ExternalId)
-          .HasMaxLength(100)
-          .IsRequired();
-
-    entity.Property(u => u.Email)
-          .HasMaxLength(256)
-          .IsRequired();
-
-    entity.Property(u => u.DisplayName)
-          .HasMaxLength(100)
-          .IsRequired();
-
-    entity.HasIndex(u => u.ExternalId).IsUnique();
-    entity.HasIndex(u => u.Email).IsUnique();
-});
-
         }
     }
 }

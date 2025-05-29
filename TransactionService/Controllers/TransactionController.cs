@@ -30,7 +30,7 @@ namespace TransactionService.Controllers
                 Timestamp = dto.Timestamp,
                 CategoryId = dto.CategoryId,
                 EventId = dto.EventId,
-                UserProfileId = dto.UserProfileId
+                UserId = dto.UserId
             };
 
             _context.Transactions.Add(transaction);
@@ -47,9 +47,15 @@ namespace TransactionService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllTransactions(bool includeDeleted = false)
+        public async Task<IActionResult> GetAllTransactions([FromQuery] string userId, bool includeDeleted = false)
         {
-            var query = _context.Transactions.AsQueryable();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required");
+            }
+
+            var query = _context.Transactions
+                .Where(t => t.UserId == userId);
             
             if (!includeDeleted)
             {
@@ -61,7 +67,7 @@ namespace TransactionService.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTransaction(Guid id, [FromQuery] bool permanent = false, [FromQuery] Guid? deletedBy = null)
+        public async Task<IActionResult> DeleteTransaction(Guid id, [FromQuery] bool permanent = false, [FromQuery] string? deletedBy = null)
         {
             var transaction = await _context.Transactions.FindAsync(id);
             if (transaction == null || (transaction.IsDeleted && !permanent))
@@ -107,14 +113,14 @@ namespace TransactionService.Controllers
             
             // Update audit fields
             transaction.UpdatedAt = DateTime.UtcNow;
-            transaction.UpdatedBy = dto.UpdatedBy;
+            transaction.UpdatedBy = dto.UserId;
             
             // Handle soft delete if requested
             if (dto.IsDeleted.HasValue && dto.IsDeleted.Value)
             {
                 transaction.IsDeleted = true;
                 transaction.DeletedAt = DateTime.UtcNow;
-                transaction.DeletedBy = dto.DeletedBy ?? dto.UpdatedBy;
+                transaction.DeletedBy = dto.DeletedBy ?? dto.UserId;
             }
             else if (dto.IsDeleted.HasValue && !dto.IsDeleted.Value && transaction.IsDeleted)
             {
