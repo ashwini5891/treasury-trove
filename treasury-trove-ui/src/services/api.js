@@ -40,6 +40,8 @@ const handleResponse = async (response) => {
 
 export const fetchTransactions = async (includeDeleted = false) => {
   const token = await getAuthToken();
+  debugger;
+  console.log('Auth Token:', token); // Debug log
   let url = buildApiUrl('transactions');
   
   if (includeDeleted) {

@@ -7,6 +7,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Welcome from './pages/Welcome';
 import Transactions from './pages/Transactions';
+import CreateTransaction from './pages/CreateTransaction';
 import './App.css';
 
 // Protected route component
@@ -52,6 +53,14 @@ function AppContent() {
         element={
           <ProtectedRoute>
             <Transactions />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/transactions/new"
+        element={
+          <ProtectedRoute>
+            <CreateTransaction />
           </ProtectedRoute>
         }
       />
