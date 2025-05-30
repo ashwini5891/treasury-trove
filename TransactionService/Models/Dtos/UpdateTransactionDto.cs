@@ -13,6 +13,6 @@ namespace TransactionService.Models.Dtos
         public string? UpdatedBy { get; set; }
         public bool? IsDeleted { get; set; }
         public string? DeletedBy { get; set; }
-        public string UserId { get; set; } = null!; // Added UserId field
+        // UserId is now obtained from the JWT token in the Authorization header
     }
 }

@@ -1,5 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using TransactionService.Data;
+using TransactionService.Extensions;
+using TransactionService.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +24,23 @@ builder.Services.AddCors(options =>
                    .AllowCredentials();
         });
 });
+
+// Add JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured")))
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 
 // Add services
@@ -41,7 +63,13 @@ app.UseRouting();
 app.UseCors(corsPolicyName);
 
 app.UseHttpsRedirection();
+
+// Add authentication and authorization middleware
+app.UseAuthentication();
 app.UseAuthorization();
+
+// Add our custom JWT middleware to extract user ID from the token
+app.UseJwtMiddleware();
 
 // Configure endpoints
 app.UseEndpoints(endpoints =>

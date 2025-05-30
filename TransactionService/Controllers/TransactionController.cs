@@ -1,14 +1,16 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TransactionService.Data;
 using TransactionService.Models;
 using TransactionService.Models.Dtos;
-using Microsoft.EntityFrameworkCore;
 
 namespace TransactionService.Controllers
 {
+    [Authorize]
     [ApiController]
-    [Route("api/[controller]")]  // CORS is handled at the application level
+    [Route("api/[controller]")]
     public class TransactionsController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -18,9 +20,22 @@ namespace TransactionService.Controllers
             _context = context;
         }
 
+        private string GetUserId()
+        {
+            // Get the user ID from the HttpContext items that was set by our JwtMiddleware
+            var userId = HttpContext.Items["sub"] as string;
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new UnauthorizedAccessException("User ID not found in token");
+            }
+            return userId;
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateTransaction([FromBody] CreateTransactionDto dto)
         {
+            var userId = GetUserId();
+            
             var transaction = new Transaction
             {
                 Id = Guid.NewGuid(),
@@ -30,7 +45,7 @@ namespace TransactionService.Controllers
                 Timestamp = dto.Timestamp,
                 CategoryId = dto.CategoryId,
                 EventId = dto.EventId,
-                UserId = dto.UserId
+                UserId = userId
             };
 
             _context.Transactions.Add(transaction);
@@ -47,12 +62,9 @@ namespace TransactionService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllTransactions([FromQuery] string userId, bool includeDeleted = false)
+        public async Task<IActionResult> GetAllTransactions(bool includeDeleted = false)
         {
-            if (string.IsNullOrEmpty(userId))
-            {
-                return BadRequest("User ID is required");
-            }
+            var userId = GetUserId();
 
             var query = _context.Transactions
                 .Where(t => t.UserId == userId);
@@ -67,7 +79,7 @@ namespace TransactionService.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTransaction(Guid id, [FromQuery] bool permanent = false, [FromQuery] string? deletedBy = null)
+        public async Task<IActionResult> DeleteTransaction(Guid id, [FromQuery] bool permanent = false)
         {
             var transaction = await _context.Transactions.FindAsync(id);
             if (transaction == null || (transaction.IsDeleted && !permanent))
@@ -83,9 +95,10 @@ namespace TransactionService.Controllers
             else
             {
                 // Perform soft delete
+                var userId = GetUserId();
                 transaction.IsDeleted = true;
                 transaction.DeletedAt = DateTime.UtcNow;
-                transaction.DeletedBy = deletedBy;
+                transaction.DeletedBy = userId;
                 _context.Transactions.Update(transaction);
             }
 
@@ -97,10 +110,18 @@ namespace TransactionService.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTransaction(Guid id, [FromBody] UpdateTransactionDto dto)
         {
+            var userId = GetUserId();
+            
             var transaction = await _context.Transactions.FindAsync(id);
             if (transaction == null || transaction.IsDeleted)
             {
                 return NotFound();
+            }
+
+            // Ensure the user owns the transaction
+            if (transaction.UserId != userId)
+            {
+                return Forbid();
             }
 
             // Update only the fields that are allowed to be updated
@@ -113,18 +134,18 @@ namespace TransactionService.Controllers
             
             // Update audit fields
             transaction.UpdatedAt = DateTime.UtcNow;
-            transaction.UpdatedBy = dto.UserId;
+            transaction.UpdatedBy = userId;
             
             // Handle soft delete if requested
             if (dto.IsDeleted.HasValue && dto.IsDeleted.Value)
             {
                 transaction.IsDeleted = true;
                 transaction.DeletedAt = DateTime.UtcNow;
-                transaction.DeletedBy = dto.DeletedBy ?? dto.UserId;
+                transaction.DeletedBy = dto.DeletedBy ?? userId; // Use userId from JWT token
             }
             else if (dto.IsDeleted.HasValue && !dto.IsDeleted.Value && transaction.IsDeleted)
             {
-                // Handle un-delete
+// Handle un-delete
                 transaction.IsDeleted = false;
                 transaction.DeletedAt = null;
                 transaction.DeletedBy = null;

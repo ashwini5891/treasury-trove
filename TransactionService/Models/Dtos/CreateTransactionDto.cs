@@ -8,6 +8,6 @@ namespace TransactionService.Models.Dtos
         public DateTime Timestamp { get; set; }
         public Guid? CategoryId { get; set; }
         public Guid? EventId { get; set; }
-        public required string UserId { get; set; }  // Changed from UserProfileId to UserId (string for Supabase ID)
+        // UserId is now obtained from the JWT token in the Authorization header
     }
 }

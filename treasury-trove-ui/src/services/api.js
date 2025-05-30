@@ -38,15 +38,12 @@ const handleResponse = async (response) => {
   return response.json();
 };
 
-export const fetchTransactions = async (userId, includeDeleted = false) => {
+export const fetchTransactions = async (includeDeleted = false) => {
   const token = await getAuthToken();
   console.log('Auth Token:', token); // Debug log
   let url = buildApiUrl('transactions');
   
   const urlObj = new URL(url);
-  
-  // Add user ID as a query parameter
-  urlObj.searchParams.append('userId', userId);
   
   if (includeDeleted) {
     urlObj.searchParams.append('includeDeleted', 'true');
