@@ -6,7 +6,7 @@
 
 ## MVP Overview
 
-The MVP delivers core features to track income and expenses, organize users into groups, and provide monthly summaries and exportable reports.
+The MVP delivers core features to track income and expenses, organise users into groups, and provide monthly summaries and exportable reports.
 
 ### Features
 - Secure user authentication (JWT-based)
