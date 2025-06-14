@@ -102,4 +102,4 @@ def create_dummy_data(engine: Engine) -> None:
 if __name__ == "__main__":
     engine = ClientSqlLite().client()
     create_database(engine)
-    create_dummy_data(engine)
+    # create_dummy_data(engine)

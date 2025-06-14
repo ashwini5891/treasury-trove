@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from dependencies.auth import get_current_user
 from repositories.client_sqllite import ClientSqlLite
 from routers import events, organisations, transactions
 
@@ -8,6 +9,9 @@ app = FastAPI(
     description="API for managing treasury events and transactions",
     version="1.0.0",
 )
+
+# Add authentication dependency to all routes
+app.dependency_overrides[get_current_user] = get_current_user
 
 
 @app.on_event("startup")

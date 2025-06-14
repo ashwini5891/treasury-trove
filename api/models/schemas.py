@@ -13,6 +13,7 @@ class OrganisationSchema(Organisation, table=True):
         primary_key=True,
         description="Unique identifier for the organization",
     )
+    owner_id: str = Field(..., description="ID of the user who owns this organization")
 
     # Relationship
     events: list["EventSchema"] = Relationship(back_populates="organization")
