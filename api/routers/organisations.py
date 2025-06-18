@@ -30,7 +30,7 @@ router = APIRouter(
 async def create_organisation(
     current_user: current_user_dependency,
     organisation: OrganisationCreate,
-    db: Session | AsyncSession = db_dependency,
+    db: Session | AsyncSession = async_db_dependency,
 ) -> OrganisationResponse:
     service = OrganisationService(db)
     # Add the current user's ID as the owner
@@ -46,7 +46,7 @@ async def create_organisation(
 async def get_organisation(
     current_user: current_user_dependency,
     organisation_id: str,
-    db: Session | AsyncSession = db_dependency,
+    db: Session | AsyncSession = async_db_dependency,
 ) -> OrganisationResponse:
     service = OrganisationService(db)
     owner_id = current_user["id"]
@@ -68,7 +68,7 @@ async def update_organisation(
     current_user: current_user_dependency,
     organisation_id: str,
     organisation: OrganisationCreate,
-    db: Session | AsyncSession = db_dependency,
+    db: Session | AsyncSession = async_db_dependency,
 ) -> OrganisationResponse:
     service = OrganisationService(db)
     owner_id = current_user["id"]
@@ -93,7 +93,7 @@ async def update_organisation(
 async def delete_organisation(
     current_user: current_user_dependency,
     organisation_id: str,
-    db: Session | AsyncSession = db_dependency,
+    db: Session | AsyncSession = async_db_dependency,
 ) -> dict[str, str]:
     service = OrganisationService(db)
     owner_id = current_user["id"]

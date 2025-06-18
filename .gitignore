@@ -1,3 +1,11 @@
+# Terraform
+infra/env.sh
+infra/.terraform/
+infra/.terraform.lock.hcl
+infra/*.tfstate
+infra/*.tfstate.*
+
+
 # Python
 __pycache__/
 *.py[cod]
@@ -33,6 +41,7 @@ htmlcov/
 ## scripts
 api/scripts/generate_test_token.py
 api/config.py
+api/env.sh
 
 # SQLite
 *.db

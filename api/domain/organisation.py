@@ -21,7 +21,7 @@ class OrganisationService:
         self, owner_id: str, organisation: Organisation
     ) -> OrganisationSchema:
         if self.is_async:
-            async with AsyncSession(self.client) as session:
+            async with self.client as session:
                 to_create = organisation.model_dump()
                 to_create.update({"owner_id": owner_id})
                 organisation_schema = OrganisationSchema.model_validate(to_create)
@@ -44,7 +44,7 @@ class OrganisationService:
         self, owner_id: str, organisation_id: str
     ) -> OrganisationSchema:
         if self.is_async:
-            async with AsyncSession(self.client) as session:
+            async with self.client as session:
                 organisation = await session.get(OrganisationSchema, organisation_id)
                 if not organisation:
                     raise OrganisationNotFoundError(organisation_id)
@@ -65,7 +65,7 @@ class OrganisationService:
         self, owner_id: str, organisation_id: str, organisation_data: Organisation
     ) -> OrganisationSchema:
         if self.is_async:
-            async with AsyncSession(self.client) as session:
+            async with self.client as session:
                 organisation = await session.get(OrganisationSchema, organisation_id)
                 if not organisation:
                     raise OrganisationNotFoundError(organisation_id)
@@ -94,7 +94,7 @@ class OrganisationService:
     @handle_db_operation
     async def delete_organisation(self, owner_id: str, organisation_id: str) -> bool:
         if self.is_async:
-            async with AsyncSession(self.client) as session:
+            async with self.client as session:
                 organisation = await session.get(OrganisationSchema, organisation_id)
                 if not organisation:
                     raise OrganisationNotFoundError(organisation_id)
