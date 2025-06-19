@@ -49,3 +49,13 @@ infra/
    ```
    terraform apply
    ```
+
+## Container Registry
+
+This configuration provisions an Azure Container Registry (ACR) for storing Docker images. The following outputs are available for use in CI/CD pipelines:
+
+- `container_registry_login_server`: The ACR login server URL
+- `container_registry_admin_username`: The admin username for ACR
+- `container_registry_admin_password`: The admin password for ACR
+
+You can use these outputs in your GitHub Actions workflows to authenticate and push images to the registry.
