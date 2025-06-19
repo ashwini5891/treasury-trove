@@ -1,5 +1,5 @@
 resource "azurerm_container_registry" "main" {
-  name                = "acrtreasurytrove${var.environment}"
+  name                = var.registry_name
   resource_group_name = var.resource_group_name
   location            = var.location
   sku                 = "Basic"
