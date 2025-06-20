@@ -51,3 +51,14 @@ resource "azurerm_storage_container" "additional_containers" {
   storage_account_id    = azurerm_storage_account.static_web.id # Changed to .id
   container_access_type = each.value.access_type
 }
+
+resource "azurerm_key_vault_secret" "blob_storage_connection" {
+  name         = "blob-storage-connection-string-${var.environment}"
+  key_vault_id = var.key_vault_id
+  value        = azurerm_storage_account.static_web.primary_connection_string
+  depends_on   = [azurerm_storage_account.static_web]
+
+  lifecycle {
+    ignore_changes = [value]
+  }
+}

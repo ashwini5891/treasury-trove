@@ -143,3 +143,8 @@ variable "webapp_principal_id" {
   type        = string
   default     = null
 }
+
+variable "key_vault_id" {
+  type        = string
+  description = "ID of the Key Vault where blob storage secrets will be stored"
+}

@@ -136,7 +136,10 @@ module "blob_storage" {
     }
   }
 
+  key_vault_id = azurerm_key_vault.main.id
+
   depends_on = [
-    module.webapp
+    module.webapp,
+    azurerm_key_vault.main
   ]
 }
