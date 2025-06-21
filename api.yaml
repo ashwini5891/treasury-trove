@@ -1,0 +1,913 @@
+openapi: 3.0.0
+info:
+  title: Event Management API
+  version: 1.0.0
+  description: API for managing organizations, events, and transactions.
+servers:
+  - url: https://api.example.com/v1
+    description: Production server
+security:
+  - bearerAuth: []
+paths:
+  /organizations:
+    get:
+      summary: Get all organizations administered by the current user
+      operationId: getOrganizations
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of organizations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      summary: Create a new organization
+      operationId: createOrganization
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewOrganization'
+      responses:
+        '201':
+          description: Organization created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /organizations/{orgId}:
+    get:
+      summary: Get a specific organization by ID
+      operationId: getOrganizationById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization to retrieve
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Organization details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    put:
+      summary: Update an existing organization
+      operationId: updateOrganization
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization to update
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewOrganization'
+      responses:
+        '200':
+          description: Organization updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      summary: Delete an organization
+      operationId: deleteOrganization
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization to delete
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Organization deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /organizations/{orgId}/events:
+    get:
+      summary: Get all events for a specific organization
+      operationId: getEventsForOrganization
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: A list of events for the organization
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    post:
+      summary: Create a new event for an organization
+      operationId: createEventForOrganization
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEvent'
+      responses:
+        '201':
+          description: Event created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /organizations/{orgId}/events/{eventId}:
+    get:
+      summary: Get a specific event by ID for an organization
+      operationId: getEventByIdForOrganization
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event to retrieve
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Event details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    put:
+      summary: Update an existing event for an organization
+      operationId: updateEventForOrganization
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event to update
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEvent'
+      responses:
+        '200':
+          description: Event updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      summary: Delete an event for an organization
+      operationId: deleteEventForOrganization
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event to delete
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Event deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /organizations/{orgId}/events/{eventId}/transactions:
+    get:
+      summary: Get all transactions for a specific event
+      operationId: getTransactionsForEvent
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: A list of transactions for the event
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    post:
+      summary: Create a new transaction for an event
+      operationId: createTransactionForEvent
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTransaction'
+      responses:
+        '201':
+          description: Transaction created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /organizations/{orgId}/events/{eventId}/transactions/{transactionId}:
+    get:
+      summary: Get a specific transaction by ID for an event
+      operationId: getTransactionByIdForEvent
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event
+          schema:
+            type: string
+            format: uuid
+        - name: transactionId
+          in: path
+          required: true
+          description: ID of the transaction to retrieve
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Transaction details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    put:
+      summary: Update an existing transaction for an event
+      operationId: updateTransactionForEvent
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event
+          schema:
+            type: string
+            format: uuid
+        - name: transactionId
+          in: path
+          required: true
+          description: ID of the transaction to update
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTransaction'
+      responses:
+        '200':
+          description: Transaction updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      summary: Delete a transaction for an event
+      operationId: deleteTransactionForEvent
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event
+          schema:
+            type: string
+            format: uuid
+        - name: transactionId
+          in: path
+          required: true
+          description: ID of the transaction to delete
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Transaction deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /organizations/{orgId}/events/{eventId}/purchase-categories:
+    get:
+      summary: Get all available purchase categories for an event
+      operationId: getPurchaseCategoriesForEvent
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: A list of purchase categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PurchaseCategory'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    post:
+      summary: Create a new purchase category for an event
+      operationId: createPurchaseCategoryForEvent
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPurchaseCategory'
+      responses:
+        '201':
+          description: Purchase category created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseCategory'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /organizations/{orgId}/events/{eventId}/purchase-categories/{categoryId}:
+    get:
+      summary: Get a specific purchase category by ID for an event
+      operationId: getPurchaseCategoryByIdForEvent
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event
+          schema:
+            type: string
+            format: uuid
+        - name: categoryId
+          in: path
+          required: true
+          description: ID of the purchase category to retrieve
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Purchase category details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseCategory'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    put:
+      summary: Update an existing purchase category for an event
+      operationId: updatePurchaseCategoryForEvent
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event
+          schema:
+            type: string
+            format: uuid
+        - name: categoryId
+          in: path
+          required: true
+          description: ID of the purchase category to update
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPurchaseCategory'
+      responses:
+        '200':
+          description: Purchase category updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseCategory'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      summary: Delete a purchase category for an event
+      operationId: deletePurchaseCategoryForEvent
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: ID of the organization
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event
+          schema:
+            type: string
+            format: uuid
+        - name: categoryId
+          in: path
+          required: true
+          description: ID of the purchase category to delete
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Purchase category deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Organization:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the organization
+          readOnly: true
+        name:
+          type: string
+          description: Name of the organization
+        metadata:
+          type: object
+          description: Additional metadata for the organization
+          nullable: true
+          properties:
+            description:
+              type: string
+            website:
+              type: string
+              format: uri
+    NewOrganization:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Name of the organization
+        metadata:
+          type: object
+          description: Additional metadata for the organization
+          nullable: true
+          properties:
+            description:
+              type: string
+            website:
+              type: string
+              format: uri
+
+    Event:
+      type: object
+      required:
+        - id
+        - name
+        - date
+        - venue
+        - entryFee
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the event
+          readOnly: true
+        name:
+          type: string
+          description: Name of the event
+        date:
+          type: string
+          format: date
+          description: Date of the event (YYYY-MM-DD)
+        venue:
+          type: string
+          description: Venue of the event
+        entryFee:
+          type: number
+          format: float
+          description: Entry fee for the event
+          minimum: 0
+        metadata:
+          type: object
+          description: Additional metadata for the event
+          nullable: true
+          properties:
+            description:
+              type: string
+            capacity:
+              type: integer
+              minimum: 0
+    NewEvent:
+      type: object
+      required:
+        - name
+        - date
+        - venue
+        - entryFee
+      properties:
+        name:
+          type: string
+          description: Name of the event
+        date:
+          type: string
+          format: date
+          description: Date of the event (YYYY-MM-DD)
+        venue:
+          type: string
+          description: Venue of the event
+        entryFee:
+          type: number
+          format: float
+          description: Entry fee for the event
+          minimum: 0
+        metadata:
+          type: object
+          description: Additional metadata for the event
+          nullable: true
+          properties:
+            description:
+              type: string
+            capacity:
+              type: integer
+              minimum: 0
+
+    Transaction:
+      type: object
+      required:
+        - id
+        - type
+        - amount
+        - timestamp
+        - category
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the transaction
+          readOnly: true
+        type:
+          type: string
+          enum: [credit, debit]
+          description: Type of transaction (credit or debit)
+        amount:
+          type: number
+          format: float
+          description: Amount of the transaction
+          minimum: 0
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the transaction
+        category:
+          type: string
+          description: Category of the purchase (e.g., food, toys)
+        description:
+          type: string
+          description: Optional description for the transaction
+          nullable: true
+    NewTransaction:
+      type: object
+      required:
+        - type
+        - amount
+        - category
+      properties:
+        type:
+          type: string
+          enum: [credit, debit]
+          description: Type of transaction (credit or debit)
+        amount:
+          type: number
+          format: float
+          description: Amount of the transaction
+          minimum: 0
+        category:
+          type: string
+          description: Category of the purchase (e.g., food, toys)
+        description:
+          type: string
+          description: Optional description for the transaction
+          nullable: true
+
+    PurchaseCategory:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the purchase category
+          readOnly: true
+        name:
+          type: string
+          enum: [food, toys]
+          description: Name of the purchase category
+    NewPurchaseCategory:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          enum: [food, toys]
+          description: Name of the purchase category
+
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    NotFoundError:
+      description: The specified resource was not found.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Resource not found
+    BadRequest:
+      description: Invalid request payload or parameters.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Invalid input

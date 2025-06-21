@@ -1,0 +1,77 @@
+name: Deploy UI
+on:
+  workflow_dispatch:
+    inputs:
+      enviroment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+        default: dev
+      app_version:
+        description: 'Version of the app to deploy'
+        required: true
+        default: "1.0.0"
+    workflow_call:
+      inputs:
+        enviroment:
+        description: 'Environment to deploy to'
+        required: true
+        default: dev
+      app_version:
+        description: 'Version of the app to deploy'
+        required: true
+        default: "1.0.0"
+
+jobs:
+  buid_frontend:
+    runs-on: ubuntu-latest
+    enviroment: ${{ inputs.enviroment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        workking-directory: client
+        run: npm install
+
+      - name: Build frontend
+        working-directory: client
+        # Use clean instaall
+        env:
+          APP_VERSION: ${{ inputs.app_version }}
+        run: npm ci && npm run build
+      - name: Upload build artifacts
+        working-directory: client
+        env:
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        run: |
+          # Login to Azure
+          az login --service-principal -u "$ARM_CLIENT_ID" -p "$ARM_CLIENT_SECRET" --tenant "$ARM_TENANT_ID"
+
+          # Set environment variable
+          ENVIRONMENT=${{ inputs.enviroment }}
+          KEYVAULT_NAME="kv-treasury-trove-${ENVIRONMENT}"
+          SECRET_NAME="blob-storage-connection-string-${ENVIRONMENT}"
+
+          # Retrieve the storage connection string from Key Vault
+          AZURE_STORAGE_CONNECTION_STRING=$(az keyvault secret show --vault-name "$KEYVAULT_NAME" --name "$SECRET_NAME" --query value -o tsv)
+          export AZURE_STORAGE_CONNECTION_STRING
+
+          # Upload build directory to blob storage $web container
+          az storage blob upload-batch \
+            --connection-string "$AZURE_STORAGE_CONNECTION_STRING" \
+            --destination "\$web" \
+            --source build \
+            --overwrite
