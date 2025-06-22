@@ -48,6 +48,7 @@ jobs:
         # Use clean instaall
         env:
           APP_VERSION: ${{ inputs.app_version }}
+          CI: false
         run: npm ci && npm run build
       - name: Upload build artifacts
         working-directory: client
