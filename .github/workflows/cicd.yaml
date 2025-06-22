@@ -1,0 +1,48 @@
+name: Main CI/CD Pipeline
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+        default: dev
+      app_version:
+        description: 'Version of the app to deploy'
+        required: true
+        default: "1.0.0"
+    workflow_call:
+      inputs:
+        environment:
+          description: 'Environment to deploy to'
+          required: true
+          default: dev
+        app_version:
+          description: 'Version of the app to deploy'
+          required: true
+          default: "1.0.0"
+jobs:
+  tf_plan:
+    uses: ./.github/workflows/tf_plan.yaml
+    with:
+      environment: ${{ inputs.environment }}
+      app_version: ${{ inputs.app_version }}
+    secrets: inherit
+  tf_apply:
+    needs: tf_plan
+    uses: ./.github/workflows/tf_apply.yaml
+    with:
+      environment: ${{ inputs.environment }}
+      app_version: ${{ inputs.app_version }}
+    secrets: inherit
+  deploy_ui:
+    uses: ./.github/workflows/deploy_ui.yaml
+    with:
+      environment: ${{ inputs.environment }}
+      app_version: ${{ inputs.app_version }}
+    secrets: inherit
+    # Deploy the backend
