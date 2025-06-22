@@ -1,0 +1,29 @@
+name: Deploy to all environments
+on:
+  push:
+    branches:
+      - main
+
+
+jobs:
+  # Figure the version befor deploying
+  deploy_dev:
+    uses: ./.github/workflows/cicd.yaml
+    with:
+      environment: dev
+      app_version: ${{ github.event.inputs.app_version || '1.0.0' }}
+    secrets: inherit
+  deploy_staging:
+    dependencies: deploy_dev
+    uses: ./.github/workflows/cicd.yaml
+    with:
+      environment: staging
+      app_version: ${{ github.event.inputs.app_version || '1.0.0' }}
+    secrets: inherit
+  deploy_prod:
+    dependencies: deploy_staging
+    uses: ./.github/workflows/cicd.yaml
+    with:
+      environment: prod
+      app_version: ${{ github.event.inputs.app_version || '1.0.0' }}
+    secrets: inherit
