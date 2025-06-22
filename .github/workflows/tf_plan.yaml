@@ -15,22 +15,25 @@ on:
         description: 'Version of the app to deploy'
         required: true
         default: "1.0.0"
+        type: string
   workflow_call:
     inputs:
       environment:
         description: 'Environment to deploy to'
         required: true
         default: dev
+        type: string
       app_version:
         description: 'Version of the app to deploy'
         required: true
         default: "1.0.0"
+        type: string
 
 jobs:
   tf_plan:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    workingg-directory: infra
+    working-directory: infra
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

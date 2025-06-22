@@ -15,16 +15,16 @@ on:
         description: 'Version of the app to deploy'
         required: true
         default: "1.0.0"
-    workflow_call:
-      inputs:
-        environment:
-          description: 'Environment to deploy to'
-          required: true
-          default: dev
-        app_version:
-          description: 'Version of the app to deploy'
-          required: true
-          default: "1.0.0"
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: dev
+      app_version:
+        description: 'Version of the app to deploy'
+        required: true
+        default: "1.0.0"
 jobs:
   tf_plan:
     uses: ./.github/workflows/tf_plan.yaml
